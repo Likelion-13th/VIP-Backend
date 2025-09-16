@@ -35,6 +35,7 @@ public enum SuccessCode implements BaseCode { // 성공
     ORDER_CREATE_SUCCESS(HttpStatus.CREATED, "ORDER_201", "주문이 성공적으로 생성되었습니다."),
     ORDER_GET_SUCCESS(HttpStatus.OK, "ORDER_2001", "주문 조회에 성공했습니다."),
     ORDER_LIST_SUCCESS(HttpStatus.OK, "ORDER_2002", "모든 주문 목록 조회에 성공했습니다."),
+    ORDER_LIST_EMPTY(HttpStatus.OK, "ORDER_2003", "등록된 주문이 없습니다."),
     ORDER_CANCEL_SUCCESS(HttpStatus.OK, "ORDER_2003", "주문이 성공적으로 취소되었습니다."),
 
     // S3

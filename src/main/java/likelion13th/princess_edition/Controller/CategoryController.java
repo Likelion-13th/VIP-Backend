@@ -1,66 +1,42 @@
 package likelion13th.princess_edition.Controller;
 
-import likelion13th.princess_edition.DTO.request.CategoryRequest;
-import likelion13th.princess_edition.DTO.response.CategoryResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import likelion13th.princess_edition.DTO.response.ItemResponse;
-import likelion13th.princess_edition.service.CategoryService;
 import likelion13th.princess_edition.global.api.ApiResponse;
 import likelion13th.princess_edition.global.api.SuccessCode;
-
+import likelion13th.princess_edition.service.CategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 
+@Tag(name = "카테고리", description = "카테고리 관련 API 입니다.")
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/categories")
 @RequiredArgsConstructor
 public class CategoryController {
-
     private final CategoryService categoryService;
 
-    // 전체 카테고리 보기
-    @GetMapping("/list")
-    public ApiResponse<List<CategoryResponse>> listCategories() {
-        List<CategoryResponse> categories = categoryService.getAllCategories();
-        return ApiResponse.onSuccess(SuccessCode.OK, categories);
-    }
+    // 상품 조회(카테고리별)
+    // 컨트롤러에서 Optional 처리하고 있음
+    // 컨트롤러에서는 예외처리만 하고자 함!
+    /** 카테고리 별 상품 조회**/
+    @GetMapping("/{categoryId}/items")
+    @Operation(summary = "카테고리별 상품 조회", description = "상품을 카테고리 별로 조회합니다.")
+    public ApiResponse<?> getItemsByCategory(@PathVariable Long categoryId) {
+        List<ItemResponse> items = categoryService.getItemsByCategory(categoryId);
 
-    // 카테고리 하나 보기
-    @GetMapping("/{id}")
-    public ApiResponse<CategoryResponse> getCategory(@PathVariable Long id) {
-        CategoryResponse category = categoryService.getCategory(id);
-        return ApiResponse.onSuccess(SuccessCode.OK, category);
-    }
-
-    // 새 카테고리 등록
-    @PostMapping("/add")
-    public ApiResponse<CategoryResponse> addCategory(@RequestBody CategoryRequest request) {
-        CategoryResponse saved = categoryService.createCategory(request);
-        return ApiResponse.onSuccess(SuccessCode.CREATED, saved);
-    }
-
-    // 카테고리 이름 수정
-    @PutMapping("/update/{id}")
-    public ApiResponse<CategoryResponse> update(@PathVariable Long id, @RequestBody CategoryRequest request) {
-        CategoryResponse updated = categoryService.updateCategory(id, request);
-        return ApiResponse.onSuccess(SuccessCode.OK, updated);
-    }
-
-    // 카테고리 삭제
-    @DeleteMapping("/remove/{id}")
-    public ApiResponse<String> remove(@PathVariable Long id) {
-        categoryService.deleteCategory(id);
-        return ApiResponse.onSuccess(SuccessCode.OK, "삭제 완료");
-    }
-
-    // 특정 카테고리에 포함된 상품 보기
-    @GetMapping("/{id}/items")
-    public ApiResponse<List<ItemResponse>> itemList(@PathVariable Long id) {
-        List<ItemResponse> items = categoryService.getItemsByCategory(id);
+        //상품 없을 시 : 성공 응답 + 빈 리스트 반환
         if (items.isEmpty()) {
-            return ApiResponse.onSuccess(SuccessCode.CATEGORY_ITEMS_EMPTY, items);
+            return ApiResponse.onSuccess(SuccessCode.CATEGORY_ITEMS_EMPTY, Collections.emptyList());
         }
+
         return ApiResponse.onSuccess(SuccessCode.CATEGORY_ITEMS_GET_SUCCESS, items);
+
     }
 }

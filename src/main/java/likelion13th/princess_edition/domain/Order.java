@@ -1,23 +1,34 @@
 package likelion13th.princess_edition.domain;
 
 import jakarta.persistence.*;
+import likelion13th.princess_edition.domain.entity.BaseEntity;
 import likelion13th.princess_edition.global.constant.OrderStatus;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "orders") // 예약어 회피
-public class Order {
+@Getter
+@Table(name = "orders") //예약어 회피
+@NoArgsConstructor
+public class Order extends BaseEntity {
 
+    /** 필드 **/
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
+    @Setter(AccessLevel.PRIVATE)
     private Long id;
 
     @Column(nullable = false)
     private int quantity;
 
+    @Setter
     @Column(nullable = false)
-    private int totalPrice;
+    private int totalPrice; // 기존 주문 내역을 유지하기 위해
 
+    @Setter
     @Column(nullable = false)
     private int finalPrice;
 
@@ -25,69 +36,43 @@ public class Order {
     @Column(nullable = false)
     private OrderStatus status;
 
-    // 다대일 관계
+    /** 연관관계 설정 **/
+    // Item와의 관계 N:1
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     private Item item;
 
-    public Order() {}
+    // User와의 관계 N:1
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    // 초기화
-    public Order(Item item, int quantity, int totalPrice, int finalPrice) {
+    /** 생성자 및 비즈니스 로직 등등..**/
+    // 내부 생성자 메서드
+    private Order(User user, Item item, int quantity) {
+        this.user = user;
         this.item = item;
         this.quantity = quantity;
-        this.totalPrice = totalPrice;
-        this.finalPrice = finalPrice;
         this.status = OrderStatus.PROCESSING;
     }
 
-    // 상태 업데이트
+    // 정적 팩토리 메서드
+    public static Order create(User user, Item item, int quantity, int totalPrice, int finalPrice) {
+        Order order = new Order(user, item, quantity);
+        order.totalPrice = totalPrice;
+        order.finalPrice = finalPrice;
+        return order;
+    }
+
+    // 주문 상태 업데이트
     public void updateStatus(OrderStatus status) {
         this.status = status;
     }
 
-    // Getter / Setter
-    public Long getId() {
-        return id;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public int getTotalPrice() {
-        return totalPrice;
-    }
-
-    public int getFinalPrice() {
-        return finalPrice;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public void setFinalPrice(int finalPrice) {
-        this.finalPrice = finalPrice;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
-    public void setItem(Item item) {
-        this.item = item;
+    //양방향 편의 메서드
+    @SuppressWarnings("lombok")
+    // 그저 경고를 제거하기 위함 입니다..
+    public void setUser(User user) {
+        this.user = user;
     }
 }

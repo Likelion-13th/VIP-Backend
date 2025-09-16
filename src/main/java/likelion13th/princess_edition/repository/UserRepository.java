@@ -1,75 +1,26 @@
-package likelion13th.princess_edition.service;
+package likelion13th.princess_edition.repository;
 
-import likelion13th.princess_edition.DTO.request.CategoryRequest;
-import likelion13th.princess_edition.DTO.response.CategoryResponse;
-import likelion13th.princess_edition.DTO.response.ItemResponse;
-import likelion13th.princess_edition.domain.Category;
-import likelion13th.princess_edition.domain.Item;
-import likelion13th.princess_edition.repository.CategoryRepository;
-import likelion13th.princess_edition.repository.ItemRepository;
-import org.springframework.stereotype.Service;
+import likelion13th.princess_edition.domain.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Service
-public class CategoryService {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    private final CategoryRepository categoryRepository;
-    private final ItemRepository itemRepository;
+    // user_id 기반 사용자 찾기 (feature/4)
+    Optional<User> findById(Long userId);
 
-    public CategoryService(CategoryRepository categoryRepository, ItemRepository itemRepository) {
-        this.categoryRepository = categoryRepository;
-        this.itemRepository = itemRepository;
-    }
+    boolean existsById(Long userId);
 
-    public List<CategoryResponse> getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
-        List<CategoryResponse> result = new ArrayList<>();
+    // providerId(카카오 고유 ID) 기반 조회 (feature/4)
+    Optional<User> findByProviderId(String providerId);
 
-        for (Category category : categories) {
-            result.add(new CategoryResponse(category.getId(), category.getName()));
-        }
+    boolean existsByProviderId(String providerId);
 
-        return result;
-    }
+    // usernickname(닉네임) 기반 사용자 찾기 (develop)
+    //List<User> findByUsernickname(String usernickname);
 
-    public CategoryResponse getCategory(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
-        return new CategoryResponse(category.getId(), category.getName());
-    }
-
-    public CategoryResponse createCategory(CategoryRequest request) {
-        Category category = new Category();
-        category.setName(request.getName());
-
-        Category saved = categoryRepository.save(category);
-        return new CategoryResponse(saved.getId(), saved.getName());
-    }
-
-    public CategoryResponse updateCategory(Long id, CategoryRequest request) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
-
-        category.setName(request.getName());
-
-        Category updated = categoryRepository.save(category);
-        return new CategoryResponse(updated.getId(), updated.getName());
-    }
-
-    public void deleteCategory(Long id) {
-        categoryRepository.deleteById(id);
-    }
-
-    public List<ItemResponse> getItemsByCategory(Long categoryId) {
-        List<Item> items = itemRepository.findAllByCategoryId(categoryId);
-        List<ItemResponse> result = new ArrayList<>();
-
-        for (Item item : items) {
-            result.add(ItemResponse.from(item));
-        }
-
-        return result;
-    }
+    // 향후 필요 시 사용할 수 있도록 주석 유지
+    //Optional<User> findByKakaoId(String kakaoId);
 }

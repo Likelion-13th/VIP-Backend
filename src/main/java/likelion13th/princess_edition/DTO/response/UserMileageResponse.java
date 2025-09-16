@@ -1,15 +1,10 @@
 package likelion13th.princess_edition.DTO.response;
 
-// 마일리지 응답
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class UserMileageResponse {
-
-    private int mileage;
-
-    public UserMileageResponse(int mileage) {
-        this.mileage = mileage;
-    }
-
-    public int getMileage() {
-        return mileage;
-    }
+    private int maxMileage;
 }

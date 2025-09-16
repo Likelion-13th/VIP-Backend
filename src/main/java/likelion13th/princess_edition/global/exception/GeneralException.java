@@ -1,7 +1,7 @@
 package likelion13th.princess_edition.global.exception;
 
-import likelion13th.shop.global.api.BaseCode;
-import likelion13th.shop.global.api.ReasonDto;
+import likelion13th.princess_edition.global.api.BaseCode;
+import likelion13th.princess_edition.global.api.ReasonDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

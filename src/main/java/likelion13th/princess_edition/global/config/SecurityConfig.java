@@ -1,9 +1,9 @@
 package likelion13th.princess_edition.global.config;
 
-import likelion13th.shop.login.auth.jwt.AuthCreationFilter;
-import likelion13th.shop.login.auth.jwt.JwtValidationFilter;
-import likelion13th.shop.login.auth.utils.OAuth2SuccessHandler;
-import likelion13th.shop.login.auth.utils.OAuth2UserServiceImpl;
+import likelion13th.princess_edition.login.auth.jwt.AuthCreationFilter;
+import likelion13th.princess_edition.login.auth.jwt.JwtValidationFilter;
+import likelion13th.princess_edition.login.auth.utils.OAuth2SuccessHandler;
+import likelion13th.princess_edition.login.auth.utils.OAuth2UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -82,7 +82,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
                 "http://sajang-dev.ap-northeast-2.elasticbeanstalk.com",
-                "https://likelionshop.netlify.app"
+                "https://vip-likelion.netlify.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));

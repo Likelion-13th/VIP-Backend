@@ -1,24 +1,12 @@
 package likelion13th.princess_edition.DTO.request;
 
-// 사용자 주소 정보 수정 시
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
 public class AddressRequest {
-
-    private String zipcode;       // 우편번호
-    private String address;       // 기본 주소
-    private String addressDetail; // 상세 주소
-
-    public AddressRequest() {
-    }
-
-    public String getZipcode() {
-        return zipcode;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getAddressDetail() {
-        return addressDetail;
-    }
+    private String zipcode;       // 사용자가 변경 가능
+    private String address;       // 사용자가 변경 가능
+    private String addressDetail; // 사용자가 변경 가능
 }

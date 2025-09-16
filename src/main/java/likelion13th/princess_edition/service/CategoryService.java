@@ -1,73 +1,38 @@
 package likelion13th.princess_edition.service;
 
-import likelion13th.princess_edition.DTO.request.CategoryRequest;
-import likelion13th.princess_edition.DTO.response.CategoryResponse;
 import likelion13th.princess_edition.DTO.response.ItemResponse;
 import likelion13th.princess_edition.domain.Category;
 import likelion13th.princess_edition.domain.Item;
+import likelion13th.princess_edition.global.api.ErrorCode;
+import likelion13th.princess_edition.global.exception.GeneralException;
 import likelion13th.princess_edition.repository.CategoryRepository;
-import likelion13th.princess_edition.repository.ItemRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
-
     private final CategoryRepository categoryRepository;
-    private final ItemRepository itemRepository;
 
-    public CategoryService(CategoryRepository categoryRepository, ItemRepository itemRepository) {
-        this.categoryRepository = categoryRepository;
-        this.itemRepository = itemRepository;
+    /** 카테고리 존재 여부 확인 **/
+    // 이런 식으로 검증하는 메서드를 따로 만들어서 재사용성 높일 수 있음
+    public Category findCategoryById(Long categoryId){
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(()-> new GeneralException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
-    public List<CategoryResponse> getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
-        List<CategoryResponse> result = new ArrayList<>();
-
-        for (Category category : categories) {
-            result.add(new CategoryResponse(category.getId(), category.getName()));
-        }
-
-        return result;
-    }
-
-    public CategoryResponse getCategory(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
-        return new CategoryResponse(category.getId(), category.getName());
-    }
-
-    public CategoryResponse createCategory(CategoryRequest request) {
-        Category category = new Category();
-        category.setName(request.getName());
-        Category saved = categoryRepository.save(category);
-        return new CategoryResponse(saved.getId(), saved.getName());
-    }
-
-    public CategoryResponse updateCategory(Long id, CategoryRequest request) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
-        category.setName(request.getName());
-        Category updated = categoryRepository.save(category);
-        return new CategoryResponse(updated.getId(), updated.getName());
-    }
-
-    public void deleteCategory(Long id) {
-        categoryRepository.deleteById(id);
-    }
-
+    /** 카테고리 별 상품 목록 조회 **/
+    // DTO에 담아서 반환
     public List<ItemResponse> getItemsByCategory(Long categoryId) {
-        List<Item> items = itemRepository.findAllByCategoryId(categoryId);
-        List<ItemResponse> result = new ArrayList<>();
+        // 카테고리 유효성 검사
+        Category category = findCategoryById(categoryId);
 
-        for (Item item : items) {
-            result.add(ItemResponse.from(item));
-        }
-
-        return result;
+        List<Item> items = category.getItems();
+        return items.stream()
+                .map(ItemResponse::from)
+                .collect(Collectors.toList());
     }
 }
-

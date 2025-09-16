@@ -1,59 +1,38 @@
 package likelion13th.princess_edition.DTO.response;
 
+
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import likelion13th.princess_edition.domain.Item;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-// 상품 정보 응답할 때
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemResponse {
-
     private Long id;
-    private String itemName;
+    private String name;
     private int price;
-    private String imagePath;
     private String brand;
+    private String imagePath;
     private boolean isNew;
 
-    public ItemResponse(Long id, String itemName, int price, String imagePath, String brand, boolean isNew) {
-        this.id = id;
-        this.itemName = itemName;
-        this.price = price;
-        this.imagePath = imagePath;
-        this.brand = brand;
-        this.isNew = isNew;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getItemName() {
-        return itemName;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public boolean isNew() {
+    @JsonProperty("isNew")
+    public boolean getIsNew() {
         return isNew;
     }
 
-    // Item -> DTO로 변환
+    // Item → ItemResponseDto 변환
     public static ItemResponse from(Item item) {
         return new ItemResponse(
                 item.getId(),
-                item.getItemName(),  // getter 명칭을 초보자 스타일로 바꿨던 구조 반영
+                item.getItemName(),
                 item.getPrice(),
-                item.getImagePath(),
                 item.getBrand(),
-                item.getIsNew()
+                item.getImagePath(),
+                item.isNew()
         );
     }
 }
