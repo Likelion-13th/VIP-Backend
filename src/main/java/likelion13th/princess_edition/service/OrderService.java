@@ -35,7 +35,7 @@ public class OrderService {
         User user = userService.getAuthenticatedUser(customUserDetails.getProviderId());
         // 상품 조회
         Item item = itemRepository.findById(request.getItemId())
-                .orElseThrow(() -> new GeneralException(ErrorCode.ITEM_NOT_FOUND);
+                .orElseThrow(() -> new GeneralException(ErrorCode.ITEM_NOT_FOUND));
 
         // 총 금액 계산
         int totalPrice = item.getPrice() * request.getQuantity();

@@ -4,7 +4,6 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import likelion13th.princess_edition.login.auth.dto.JwtDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.parsers.ReturnTypeParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,17 +23,15 @@ public class TokenProvider {
     private final Key secretkey;
     private final long accessTokenExpiration;
     private final long refreshTokenExpiration;
-    private final ReturnTypeParser returnTypeParser;
 
     public TokenProvider(
-            @Value("${JWT_SECRET") String secretkey,
-            @Value("${JWT_EXPIRATION") long accessTokenExpiration,
-            @Value("${JWT_REFRESH_EXPIRATION") long refreshTokenExpiration, ReturnTypeParser returnTypeParser)
+            @Value("${JWT_SECRET}") String secretkey,
+            @Value("${JWT_EXPIRATION}") long accessTokenExpiration,
+            @Value("${JWT_REFRESH_EXPIRATION}") long refreshTokenExpiration)
     {
         this.secretkey = Keys.hmacShaKeyFor(secretkey.getBytes());
         this.accessTokenExpiration = accessTokenExpiration;
         this.refreshTokenExpiration = refreshTokenExpiration;
-        this.returnTypeParser = returnTypeParser;
     }
 
     public JwtDto generateToken(UserDetails userDetails) {
@@ -96,7 +93,7 @@ public class TokenProvider {
         }
     }
 //claims -> GrantedAuthority 변환
-    public Collection<? extends GrantedAuthority> getAuthorities(Claims claims) {
+    public Collection<? extends GrantedAuthority> getAuthFromClaims(Claims claims) {
         String authoritiesString = claims.get("authorities", String.class);
         if (authoritiesString != null || authoritiesString.isEmpty()) {
             log.warn("권한 정보가 없다 - 기본 ROLE_USER 부여");
