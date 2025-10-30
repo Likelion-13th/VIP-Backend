@@ -1,6 +1,6 @@
 package likelion13th.princess_edition.global.exception;
 
-import likelion13th.shop.global.api.BaseCode;
+import likelion13th.princess_edition.global.api.BaseCode;
 import lombok.Getter;
 
 @Getter
