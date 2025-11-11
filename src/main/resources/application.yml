@@ -44,7 +44,7 @@ cloud:
     region: ${AWS_REGION:ap-northeast-2}
     bucket: ${AWS_BUCKET:default-bucket}
 
-sever:
+server:
   tomcat:
     max-swallow-size: -1
     max-http-form-post-size: -1
